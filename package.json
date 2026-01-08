@@ -1,0 +1,23 @@
+{
+  "name": "playwright-automation-exercise",
+  "version": "1.0.0",
+  "description": "This is a javascript automation project on a e-commerce website using the Playwright automation framework",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bobbydowling6/playwright-automation-exercise.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/bobbydowling6/playwright-automation-exercise/issues"
+  },
+  "homepage": "https://github.com/bobbydowling6/playwright-automation-exercise#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.57.0",
+    "@types/node": "^25.0.3"
+  }
+}
