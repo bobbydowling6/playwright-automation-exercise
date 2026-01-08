@@ -82,30 +82,30 @@ test('User is able to register as a new user', async ({ page }) => {
 
   // Verify that 'ACCOUNT CREATED!' is visible
   await expect(page.getByText('Account Created!')).toBeVisible();
-  await page.waitForTimeout(4000); // Small wait before clicking continue
+  //await page.waitForTimeout(4000); // Small wait before clicking continue
   //await page.locator('iframe[name="aswift_2"]').contentFrame().getByRole('button', { name: 'Close ad' }).click(); // Close any ad iframe if present
 
   // Click on 'Continue' button
   await page.getByRole('link', { name: 'Continue' }).click();
   //await page.waitForLoadState('networkidle');
-  await page.waitForTimeout(4000); // Wait for 4 seconds to ensure the next page loads
+  //await page.waitForTimeout(4000); // Wait for 4 seconds to ensure the next page loads
 
   // Verify that 'Logged in as username' is visible
   await page.getByRole('listitem').filter({ hasText: 'Logged in as Btestuser' });
-  await page.waitForTimeout(4000); // Small wait before proceeding
+  //await page.waitForTimeout(4000); // Small wait before proceeding
   await page.getByText('Logged in as Btestuser').click(); // Click to ensure focus
 
   // Click on 'Delete Account' button
   await page.getByRole('link', { name: ' Delete Account' }).click();
   //await page.waitForLoadState('networkidle');
-  await page.waitForTimeout(4000); // Wait for 4 seconds to ensure the next page loads
+  //await page.waitForTimeout(4000); // Wait for 4 seconds to ensure the next page loads
 
   // Verify that 'ACCOUNT DELETED!' is visible and click 'Continue' button
   await expect(page.getByText('Account Deleted!')).toBeVisible();
-  await page.waitForTimeout(4000); // Small wait before clicking continue
+  //await page.waitForTimeout(4000); // Small wait before clicking continue
   //await page.waitForLoadState('networkidle');
   await page.getByRole('link', { name: 'Continue' }).click();
   //await page.waitForLoadState('networkidle');
-  await page.waitForTimeout(4000); // Wait for 4 seconds to ensure the next page loads
+  //await page.waitForTimeout(4000); // Wait for 4 seconds to ensure the next page loads
   await expect(page).toHaveTitle('Automation Exercise');
 });
