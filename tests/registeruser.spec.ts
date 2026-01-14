@@ -1,30 +1,38 @@
 import { test, expect } from '@playwright/test';
 
 test('User is able to register as a new user', async ({ page }) => {
-  // Go to https://automationexercise.com/
-  await page.goto('http://automationexercise.com/');
-  //Verify that home page is visible successfully
-  await expect(page).toHaveTitle('Automation Exercise');
+  await test.step('Go to https://automationexercise.com/', async () => {
+    await page.goto('http://automationexercise.com/');
+    await test.step('Verify that home page is visible successfully', async () => {
+    await expect(page).toHaveTitle('Automation Exercise');
+  });
+  });
+  
 
-  // Click on 'Signup / Login' button
-  await page.getByRole('link', { name: ' Signup / Login' }).click();
+  await test.step('Click on \'Signup / Login\' button', async () => {
+    await page.getByRole('link', { name: ' Signup / Login' }).click();
+  });
 
-  // Verify 'New User Signup!' is visible
-  await expect(page.getByText('New User Signup!')).toBeVisible();
+  await test.step('Verify \'New User Signup!\' is visible', async () => {
+    await expect(page.getByText('New User Signup!')).toBeVisible();
+  });
 
-  // Enter name and email address
+  await test.step('Enter name and email address', async () => {
   await page.getByRole('textbox', { name: 'Name' }).click();
   await page.getByRole('textbox', { name: 'Name' }).fill('Btestuser');
   await page.locator('form').filter({ hasText: 'Signup' }).getByPlaceholder('Email Address').click();
   await page.locator('form').filter({ hasText: 'Signup' }).getByPlaceholder('Email Address').fill('btestuser@example.com');
+  });
 
-  // Click on 'Signup' button
-  await page.getByRole('button', { name: 'Signup' }).click();
+  await test.step('Click \'Signup\' button', async () => {
+    await page.getByRole('button', { name: 'Signup' }).click();
+  });
 
-  // Verify that 'ENTER ACCOUNT INFORMATION' is visible
-  await expect(page.getByText('Enter Account Information')).toBeVisible();
+  await test.step('Verify that \'ENTER ACCOUNT INFORMATION\' is visible', async () => {
+    await expect(page.getByText('Enter Account Information')).toBeVisible();
+  });
 
-  // Fill details: Title, Name, Email, Password, Date of birth
+  await test.step('Fill details: Title, Name, Email, Password, Date of birth', async () => {
   await expect(page.getByText('Title')).toBeVisible();
   await page.getByRole('radio', { name: 'Mr.' }).click();
   await page.getByRole('textbox', { name: 'Password *' }).click();
@@ -33,20 +41,22 @@ test('User is able to register as a new user', async ({ page }) => {
   await page.locator('#days').selectOption('1');
   await page.locator('#months').selectOption('January');
   await page.locator('#years').selectOption('1990');
+  });
 
-  // Select checkbox 'Sign up for our newsletter!'
+  await test.step('Select checkbox \'Sign up for our newsletter!\' and \'Receive special offers from our partners!\'', async () => {
   await page.getByRole('checkbox', { name: 'Sign up for our newsletter!' }).click();
   await page.waitForTimeout(500); // Small wait to ensure checkbox state is updated
   await expect(page.getByLabel('Sign up for our newsletter!')).toBeChecked();
   await page.getByLabel('Sign up for our newsletter!').check();
 
-  // Select checkbox 'Receive special offers from our partners!'
-  await page.getByRole('checkbox', { name: 'Receive special offers from our partners!' }).click();
-  await page.waitForTimeout(500); // Small wait to ensure checkbox state is updated
-  await expect(page.getByLabel('Receive special offers from our partners!')).toBeChecked(); 
-  await page.getByLabel('Receive special offers from our partners!').check();
-
-  // Fill details: First name, Last name, Company, Address, Address2, Country, State, City, Zipcode, Mobile Number
+  await test.step('Select checkbox \'Receive special offers from our partners!\'', async () => {
+    await page.getByRole('checkbox', { name: 'Receive special offers from our partners!' }).click();
+    await page.waitForTimeout(500); // Small wait to ensure checkbox state is updated
+    await expect(page.getByLabel('Receive special offers from our partners!')).toBeChecked(); 
+    await page.getByLabel('Receive special offers from our partners!').check();
+  });
+})
+  await test.step('Fill details: First name, Last name, Company, Address, Address2, Country, State, City, Zipcode, Mobile Number', async () => {
   await page.getByRole('paragraph').filter({ hasText: 'First name *' }).getByRole('superscript');
   await expect(page.getByText('First name *')).toBeVisible();
   await page.getByRole('textbox', { name: 'First name *' }).fill('Test');
@@ -74,26 +84,24 @@ test('User is able to register as a new user', async ({ page }) => {
   await expect(page.getByText('Mobile Number *')).toBeVisible();
   await page.getByRole('textbox', { name: 'Mobile Number *' }).click();
   await page.getByRole('textbox', { name: 'Mobile Number *' }).fill('1234567890');
+  });
 
-  // Click on 'Create Account' button
-  await page.getByRole('button', { name: 'Create Account' }).click();
-  //await page.waitForLoadState('networkidle');
-  //await page.waitForTimeout(2000); // Wait for 2 seconds to ensure the next page loads
+  await test.step('Click \'Create Account\' button', async () => {
+    await page.getByRole('button', { name: 'Create Account' }).click();
+  });
 
-  // Verify that 'ACCOUNT CREATED!' is visible
-  await expect(page.getByText('Account Created!')).toBeVisible();
-  //await page.waitForTimeout(4000); // Small wait before clicking continue
-  //await page.locator('iframe[name="aswift_2"]').contentFrame().getByRole('button', { name: 'Close ad' }).click(); // Close any ad iframe if present
+  await test.step('Verify that \'ACCOUNT CREATED!\' is visible', async () => {
+    await expect(page.getByText('Account Created!')).toBeVisible();
+  });
 
-  // Click on 'Continue' button
-  await page.getByRole('link', { name: 'Continue' }).click();
-  //await page.waitForLoadState('networkidle');
-  //await page.waitForTimeout(4000); // Wait for 4 seconds to ensure the next page loads
+  await test.step('Click \'Continue\' button', async () => {
+    await page.getByRole('link', { name: 'Continue' }).click();
+  });
 
-  // Verify that 'Logged in as username' is visible
-  await page.getByRole('listitem').filter({ hasText: 'Logged in as Btestuser' });
-  //await page.waitForTimeout(4000); // Small wait before proceeding
-  await page.getByText('Logged in as Btestuser').click(); // Click to ensure focus
-  await expect(page).toHaveTitle('Automation Exercise');
+  await test.step('Verify that \'Logged in as username\' is visible', async () => {
+    await page.getByRole('listitem').filter({ hasText: 'Logged in as Btestuser' });
+    await page.getByText('Logged in as Btestuser').click(); // Click to ensure focus
+    await expect(page).toHaveTitle('Automation Exercise');
+  });
   
 });

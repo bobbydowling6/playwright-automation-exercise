@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test('User is able to register as a new user', async ({ page }) => {
+test('User is able to login as an user', async ({ page }) => {
 // Go to https://automationexercise.com/
 await page.goto('http://automationexercise.com/');
 //Verify that home page is visible successfully
