@@ -26,6 +26,6 @@ test('User is not able to register new user with existing email', async ({page})
   });
   
     await test.step('Verify that error \'Email Address already exist!\' is visible', async () => {
-      await expect(page.getByText('Email Address already exist!')).toBeVisible();
-    });   
+    console.log(await page.content()); // Print page HTML for diagnosis
+    await expect(page.getByText('Email Address already exist!')).toBeVisible();    });   
 });

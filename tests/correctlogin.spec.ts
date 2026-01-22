@@ -28,6 +28,6 @@ test('User is able to login with correct credentials', async ({ page }) => {
   });
 
   await test.step('Verify that \'Logged in as username\' is visible', async () => {
-    await expect(page.getByRole('listitem').filter({ hasText: 'Logged in as Btestuser' })).toBeVisible();
+  await expect(page.getByRole('listitem').filter({ hasText: 'Logged in as Btestuser' })).toBeVisible();
   });
 });
