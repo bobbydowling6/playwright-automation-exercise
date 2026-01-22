@@ -8,7 +8,7 @@ test('Verify that user is able to verify all products and views first product de
         });
     });
     await test.step('Click on \'Products\' button', async () => {
-        await page.getByRole('link', { name: ' Products' }).click();
+        await page.getByRole('link', { name: ' Products' }).click({force: true}); // Note: site uses icons in text
         await test.step('Verify that user is navigated to ALL PRODUCTS page successfully', async () => {
             await expect(page).toHaveURL(/\/products/);
             await test.step('Verify that \'ALL PRODUCTS\' is visible', async () => {
@@ -26,6 +26,7 @@ test('Verify that user is able to verify all products and views first product de
         await test.step('Verify that user is navigated to product detail page', async () => {
             await expect(page).toHaveURL(/\/product_details\/\d+/);
             await test.step('Verify that product detail is visible', async () => {
+                await expect(page.locator('.product-information')).toBeVisible();
                 await expect(page.getByRole('heading', { name: 'Blue Top' })).toBeVisible();
                 await expect(page.getByText('Category: Women > Tops')).toBeVisible();
                 await expect(page.getByText('Rs.')).toBeVisible();
