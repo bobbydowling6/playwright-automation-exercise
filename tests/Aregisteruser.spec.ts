@@ -28,7 +28,7 @@ test('User is able to register as a new user', async ({ page }) => {
 });
 
   await test.step('Verify that \'ENTER ACCOUNT INFORMATION\' is visible', async () => {
-    await expect(page.getByText('Enter ACCOUNT INFORMATION')).toBeVisible();
+    await expect(page.getByText('ENTER ACCOUNT INFORMATION')).toBeVisible();
   });
 
   await test.step('Fill details: Title, Name, Email, Password, Date of birth', async () => {
