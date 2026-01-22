@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test('User is able to register as a new user', async ({ page }) => {
   await test.step('Go to https://automationexercise.com/', async () => {
-    await page.goto('http://automationexercise.com/');
+    await page.goto('https://automationexercise.com/');
     await test.step('Verify that home page is visible successfully', async () => {
     await expect(page).toHaveTitle('Automation Exercise');
   });
@@ -23,11 +23,12 @@ test('User is able to register as a new user', async ({ page }) => {
   await page.locator('form').filter({ hasText: 'Signup' }).getByPlaceholder('Email Address').fill('btestuser@example.com');
   await test.step('Click \'Signup\' button', async () => {
     await page.getByRole('button', { name: 'Signup' }).click();
+    await page.waitForLoadState('networkidle');
   });
 });
 
   await test.step('Verify that \'ENTER ACCOUNT INFORMATION\' is visible', async () => {
-    await expect(page.getByText('Enter Account Information')).toBeVisible();
+    await expect(page.getByText('Enter ACCOUNT INFORMATION')).toBeVisible();
   });
 
   await test.step('Fill details: Title, Name, Email, Password, Date of birth', async () => {
