@@ -1,11 +1,23 @@
 import { test, expect } from '@playwright/test';
 
-test('Verify products in cart', async ({ page }) => {
-    await test.step('Go to home page', async () => {
-        await page.goto('https://automationexercise.com/');
-        await expect(page).toHaveTitle(/Automation Exercise/);
-    });
+test.beforeEach(async ({ page }) => {
+  // Intercept and abort all requests to common ad providers
+  await page.route('**/*google*/**', route => {
+    const url = route.request().url();
+    if (url.includes('googleads') || url.includes('doubleclick') || url.includes('adservice')) {
+      return route.abort();
+    }
+    return route.continue();
+  });
+});
 
+test('Verify products added in cart', async ({ page }) => {
+    await test.step('Go to https://automationexercise.com/', async () => {
+    await page.goto('http://automationexercise.com/');
+    await test.step('Verify that home page is visible successfully', async () => {
+      await expect(page).toHaveTitle('Automation Exercise');
+    });
+    });
     await test.step('Navigate to Products', async () => {
         await page.getByRole('link', { name: ' Products' }).click({force: true}); // Note: site uses icons in text
         await test.step('Verify that user is navigated to ALL PRODUCTS page successfully', async () => {

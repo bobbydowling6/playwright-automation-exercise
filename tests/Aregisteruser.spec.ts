@@ -1,5 +1,16 @@
 import { test, expect } from '@playwright/test';
 
+test.beforeEach(async ({ page }) => {
+    // Intercept and abort all requests to common ad providers
+    await page.route('**/*google*/**', route => {
+        const url = route.request().url();
+        if (url.includes('googleads') || url.includes('doubleclick') || url.includes('adservice')) {
+            return route.abort();
+        }
+        return route.continue();
+    });
+});
+
 test('User is able to register as a new user', async ({ page }) => {
   await test.step('Go to https://automationexercise.com/', async () => {
     await page.goto('https://automationexercise.com/');

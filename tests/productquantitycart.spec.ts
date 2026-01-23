@@ -1,5 +1,16 @@
 import { test, expect } from '@playwright/test';
 
+test.beforeEach(async ({ page }) => {
+    // Intercept and abort all requests to common ad providers
+    await page.route('**/*google*/**', route => {
+        const url = route.request().url();
+        if (url.includes('googleads') || url.includes('doubleclick') || url.includes('adservice')) {
+            return route.abort();
+        }
+        return route.continue();
+    });
+});
+
 test('Verify that user is able to add products to cart with different quantities', async ({ page }) => {    
     
     await test.step('Navigate to home page', async () => {
