@@ -30,12 +30,16 @@ test('Comprehensive Product API Audit to GET All Products', async ({ request }) 
   
   const rawData = await response.json();
 
-  // --- STEP 2: Validate & Transform ---
+  // --- STEP 2: Validate Status is 200 ---
+    expect(rawData.responseCode).toBe(200);
+    console.log(`Received expected response code: ${rawData.responseCode}`);
+
+  // --- STEP 3: Validate & Transform ---
   // If the API structure changes, this line will throw a detailed error
   const validatedData = ApiResponseSchema.parse(rawData);
   const products = validatedData.products;
 
-  // --- STEP 3: Data Analysis (Find Most and Least Expensive) ---
+  // --- STEP 4: Data Analysis (Find Most and Least Expensive) ---
   const mostExpensive = products.reduce((prev, current) => 
     (prev.price > current.price) ? prev : current
   );
@@ -48,15 +52,15 @@ test('Comprehensive Product API Audit to GET All Products', async ({ request }) 
   console.log(`- Most Expensive: ${mostExpensive.name} (${mostExpensive.price})`);
   console.log(`- Least Expensive: ${leastExpensive.name} (${leastExpensive.price}) =>`)
 
-  // --- STEP 4: Export to CSV ---
+  // --- STEP 5: Export to CSV ---
   const csvHeader = 'ID,Name,Price_Numeric,Brand\n';
   const csvRows = products
     .map(p => `${p.id},"${p.name}",${p.price},"${p.brand}"`)
     .join('\n');
 
-  fs.writeFileSync('product_audit_report.csv', csvHeader + csvRows);
+  fs.writeFileSync('brands_list_report.csv', csvHeader + csvRows);
   
-  // --- STEP 5: Final Assertions ---
+  // --- STEP 6: Final Assertions ---
   expect(validatedData.responseCode).toBe(200);
   expect(products.length).toBeGreaterThan(0);
   // Business logic check: Ensure no product is free
