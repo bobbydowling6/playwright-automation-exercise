@@ -4,79 +4,75 @@ This is a JavaScript/TypeScript automation project for testing an e-commerce web
 
 ## Project Overview
 
-This project contains automated end-to-end tests for the [Automation Exercise](https://automationexercise.com/) website, a demo e-commerce platform. The tests are organized into smoke tests and API tests, covering comprehensive user workflows including user registration, authentication, product browsing, shopping cart operations, and account management.
+This project contains comprehensive automated end-to-end tests and API tests for the [Automation Exercise](https://automationexercise.com/) website, a demo e-commerce platform. The test suite includes smoke tests covering user workflows, product interactions, cart management, and API validation tests.
 
 ## Features Tested
 
-### User Management
+### Smoke Tests (E2E)
 - **User Registration**: Complete user account creation flow with form validation
-- **User Registration (Existing Email)**: Validation for duplicate email registration attempts
-- **User Login**: Both successful and failed login scenarios
-- **User Logout**: Successful logout functionality
-- **Account Management**: User account deletion
-
-### Product Features
-- **Product Search**: Search functionality with multiple product queries
-- **Product Categories**: Navigation through category and sub-category pages
-- **Brand Products**: Viewing products by brand
-- **Product Details**: Viewing all products and product detail pages
-- **Product Reviews**: Adding reviews to products
-
-### Shopping Cart
-- **Add Products to Cart**: Adding multiple products to shopping cart
-- **Remove Products from Cart**: Removing products from shopping cart
-- **Product Quantity**: Managing product quantities in cart
-- **Cart Subscription**: Newsletter subscription from cart page
-
-### Other Features
+- **User Login/Logout**: Both successful and failed login scenarios, logout functionality
 - **Contact Us**: Contact form submission and validation
-- **Newsletter Subscription**: Subscription functionality on home and cart pages
-- **Scroll Functionality**: Scroll up/down functionality with and without arrow button
-- **Test Case Page**: Navigation to test case documentation page
-- **Recommended Items**: Adding products from recommended items section
+- **Account Management**: User account deletion and existing user registration validation
+- **Product Search**: Product search functionality and results validation
+- **Shopping Cart**: Add/remove products, update quantities, cart management
+- **Product Details**: View all products, product detail pages, brand and category filtering
+- **Product Reviews**: Add reviews to products
+- **Subscriptions**: Newsletter subscription from home page and cart page
+- **Invoice Download**: Download invoice functionality
+- **Test Cases**: Multiple test case scenarios (14, 15, 16, 22, 25, 26)
 
 ### API Tests
-- **Broken Links**: Automated detection of broken links across the website
+- **Product API**: Comprehensive product API validation with schema validation
+- **API Endpoints**: Multiple API endpoint testing scenarios
+- **Broken Links**: Automated broken link detection across the website
+- **Data Export**: CSV report generation for product and brand audits
 
 ## Technology Stack
 
-- **Playwright**: Modern web testing framework for end-to-end testing (v1.57.0)
+- **Playwright**: Modern web testing framework for end-to-end and API testing
 - **TypeScript**: Type-safe JavaScript for better development experience
 - **Node.js**: JavaScript runtime environment
+- **Zod**: Schema validation library for API response validation
 
 ## Project Structure
 
 ```
 playwright-automation-exercise/
-├── smoke tests/                # End-to-end smoke tests
-│   ├── Aregisteruser.spec.ts              # User registration test
-│   ├── Bregisteruserexisting.spec.ts      # Duplicate email registration test
-│   ├── correctlogin.spec.ts               # Successful login test
-│   ├── incorrectlogin.spec.ts             # Failed login test
-│   ├── correctlogout.spec.ts              # Logout test
-│   ├── contactus.spec.ts                  # Contact form test
-│   ├── Zdeleteuser.spec.ts                # Account deletion test
-│   ├── searchproduct.spec.ts              # Product search test
-│   ├── viewcategoryproducts.spec.ts       # Category navigation test
-│   ├── viewbrandproducts.spec.ts          # Brand products test
-│   ├── allproductsdetailpage.spec.ts      # Product detail pages test
-│   ├── addproductscart.spec.ts            # Add products to cart test
-│   ├── removeproductscart.spec.ts         # Remove products from cart test
-│   ├── productquantitycart.spec.ts        # Product quantity management test
-│   ├── addreviewproduct.spec.ts           # Product review test
-│   ├── subscriptionhome.spec.ts           # Home page subscription test
-│   ├── subscriptioncart.spec.ts           # Cart page subscription test
-│   ├── testcase22.spec.ts                 # Recommended items test
-│   ├── testcase25.spec.ts                 # Scroll with arrow button test
-│   ├── testcase26.spec.ts                 # Scroll without arrow button test
-│   └── testcasepage.spec.ts               # Test case page navigation test
+├── smoke tests/                # End-to-end UI tests
+│   ├── Aregisteruser.spec.ts           # User registration test
+│   ├── Bregisteruserexisting.spec.ts   # Existing user registration test
+│   ├── correctlogin.spec.ts            # Successful login test
+│   ├── incorrectlogin.spec.ts          # Failed login test
+│   ├── correctlogout.spec.ts           # Logout test
+│   ├── contactus.spec.ts               # Contact form test
+│   ├── searchproduct.spec.ts           # Product search test
+│   ├── addproductscart.spec.ts         # Add products to cart
+│   ├── removeproductscart.spec.ts      # Remove products from cart
+│   ├── productquantitycart.spec.ts     # Update cart quantities
+│   ├── allproductsdetailpage.spec.ts   # Product detail pages
+│   ├── viewbrandproducts.spec.ts       # Brand filtering
+│   ├── viewcategoryproducts.spec.ts    # Category filtering
+│   ├── addreviewproduct.spec.ts        # Product reviews
+│   ├── subscriptionhome.spec.ts        # Home page subscription
+│   ├── subscriptioncart.spec.ts       # Cart page subscription
+│   ├── 3.downloadinvoice.spec.ts      # Invoice download
+│   ├── testcase*.spec.ts              # Various test case scenarios
+│   └── Zdeleteuser.spec.ts            # Account deletion test
 ├── api tests/                  # API and integration tests
-│   └── findbrokenlinks.spec.ts            # Broken links detection test
-├── playwright-report/          # Test execution reports
-├── test-results/               # Test artifacts and screenshots
-├── playwright.config.ts        # Playwright configuration
-├── package.json                # Project dependencies and scripts
-└── README.md                   # This file
+│   ├── apitest1.spec.ts              # API test 1
+│   ├── apitest2.spec.ts              # API test 2
+│   ├── apitest3.spec.ts              # API test 3
+│   ├── apitest4.spec.ts              # API test 4
+│   ├── apitest5.spec.ts              # API test 5
+│   ├── apitest6.spec.ts              # API test 6
+│   └── findbrokenlinks.spec.ts       # Broken link detection
+├── playwright-report/         # Test execution reports
+├── test-results/              # Test artifacts and screenshots
+├── brands_list_report.csv     # Generated brand/product audit report
+├── product_audit_report.csv   # Generated product audit report
+├── playwright.config.ts       # Playwright configuration
+├── package.json               # Project dependencies and scripts
+└── README.md                  # This file
 ```
 
 ## Prerequisites
@@ -118,17 +114,20 @@ npx playwright test --project=webkit
 
 ### Run a specific test file
 ```bash
+# Run a smoke test
 npx playwright test "smoke tests/Aregisteruser.spec.ts"
+
+# Run an API test
+npx playwright test "api tests/apitest1.spec.ts"
 ```
 
-### Run all smoke tests
+### Run tests by directory
 ```bash
-npx playwright test "smoke tests"
-```
+# Run all smoke tests only
+npx playwright test "smoke tests/"
 
-### Run all API tests
-```bash
-npx playwright test "api tests"
+# Run all API tests only
+npx playwright test "api tests/"
 ```
 
 ### Run tests in headed mode (see browser UI)
@@ -145,22 +144,28 @@ npx playwright show-report
 
 The project is configured in `playwright.config.ts` with the following settings:
 
-- **Test Match**: Tests are located in `smoke tests/**/*.spec.ts` and `api tests/**/*.spec.ts`
+- **Test Match**: Tests are located in `smoke tests/` and `api tests/` directories
 - **Browsers**: Chromium, Firefox, and WebKit
 - **Parallel Execution**: Tests run in parallel for faster execution (disabled on CI)
 - **Retries**: Automatic retries on CI (2 retries) and no retries locally
 - **Tracing**: Trace collection on first retry for debugging
 - **Reporter**: HTML report generation
-- **Workers**: Unlimited workers locally, single worker on CI
 
 ## Test Execution Details
 
 - Tests are written using Playwright's test runner
-- Each test follows a step-by-step approach with clear assertions using `test.step()`
+- Each test follows a step-by-step approach with clear assertions
 - Tests include proper waits and element interactions
 - Screenshots and traces are captured on failures for debugging
-- Many tests include ad-blocking logic to prevent interference from ad providers
-- API tests use Playwright's request context for HTTP testing
+- **Ad Blocking**: Smoke tests include ad blocking to improve test stability and speed
+- **API Validation**: API tests use Zod schema validation for type-safe API response validation
+- **Report Generation**: API tests generate CSV reports for product and brand audits
+
+## Dependencies
+
+- `@playwright/test`: ^1.57.0 - Playwright testing framework
+- `@types/node`: ^25.0.3 - TypeScript type definitions for Node.js
+- `zod`: ^4.3.6 - Schema validation library for API testing
 
 ## Contributing
 
