@@ -156,21 +156,20 @@ await test.step('Enter name and email address', async () => {
         await page.locator('input[name="cvc"]').fill('123');
         await expect(page.getByText('Expiration')).toBeVisible();
         await page.getByRole('textbox', { name: 'MM' }).fill('12');
-        await page.getByRole('textbox', { name: 'YYYY' }).fill('2025');
+        await page.getByRole('textbox', { name: 'YYYY' }).fill('2029');
         await page.getByRole('button', { name: 'Pay and Confirm Order' }).click();
     });
     await test.step('Verify success message \'Your order has been placed successfully!\' is visible', async () => {
         await expect(page.getByText('Order Placed!')).toBeVisible();
         await expect(page.getByText('Congratulations! Your order')).toBeVisible();
     });
-    await test.step('Click \'Download Invoice\' button and verify invoice is downloaded successfully', async () => {
-        const [download] = await Promise.all([
-          page.waitForEvent('download'),
-          page.getByRole('link', { name: 'Download Invoice' }).click()
-        ]);
-        const path = await download.path();
-        expect(path).not.toBeNull();
-    });
+    await test.step('Download Invoice', async () => {
+    const [download] = await Promise.all([
+      page.waitForEvent('download'),
+      page.getByRole('link', { name: 'Download Invoice' }).click()
+    ]);
+    expect(download.suggestedFilename()).toContain('invoice');
+  });
     await test.step('Click on \'Delete Account\' button', async () => {
     await page.getByRole('link', { name: ' Delete Account' }).click();
   });
