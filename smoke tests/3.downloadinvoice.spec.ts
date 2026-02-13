@@ -1,4 +1,6 @@
 import { test, expect } from '@playwright/test';
+import fs from 'fs';
+import path from 'path';
 
 test.beforeEach(async ({ page }) => {
   // Intercept and abort all requests to common ad providers
@@ -169,6 +171,15 @@ await test.step('Enter name and email address', async () => {
       page.getByRole('link', { name: 'Download Invoice' }).click()
     ]);
     expect(download.suggestedFilename()).toContain('invoice');
+
+    const saveDir = path.join(process.cwd(), 'test-results', 'downloaded-invoices');
+    fs.mkdirSync(saveDir, { recursive: true });
+    const savePath = path.join(saveDir, download.suggestedFilename());
+    await download.saveAs(savePath);
+
+    expect(fs.existsSync(savePath), 'Downloaded invoice file should exist on disk').toBe(true);
+    const stats = fs.statSync(savePath);
+    expect(stats.size, 'Downloaded invoice file should not be empty').toBeGreaterThan(0);
   });
     await test.step('Click on \'Delete Account\' button', async () => {
     await page.getByRole('link', { name: ' Delete Account' }).click();
