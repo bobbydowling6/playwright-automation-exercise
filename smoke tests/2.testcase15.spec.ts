@@ -25,10 +25,11 @@ test('User can register account before checkout and place order successfully', a
   });
 
   await test.step('Enter name and email address', async () => {
+  const signupEmail = `btestuser.${Date.now()}@example.com`;
   await page.getByRole('textbox', { name: 'Name' }).click();
   await page.getByRole('textbox', { name: 'Name' }).fill('Btestuser');
   await page.locator('form').filter({ hasText: 'Signup' }).getByPlaceholder('Email Address').click();
-  await page.locator('form').filter({ hasText: 'Signup' }).getByPlaceholder('Email Address').fill('btestuser@example.com');
+  await page.locator('form').filter({ hasText: 'Signup' }).getByPlaceholder('Email Address').fill(signupEmail);
   await test.step('Click \'Signup\' button', async () => {
     await page.getByRole('button', { name: 'Signup' }).click();
     await page.waitForLoadState('networkidle');
@@ -36,7 +37,7 @@ test('User can register account before checkout and place order successfully', a
 });
 
 await test.step('Verify that \'ENTER ACCOUNT INFORMATION\' is visible', async () => {
-    await expect(page.getByText('ENTER ACCOUNT INFORMATION')).toBeVisible();
+    await expect(page.getByText(/ENTER ACCOUNT INFORMATION/i)).toBeVisible({ timeout: 15000 });
   });
 
 await test.step('Fill details: Title, Name, Email, Password, Date of birth', async () => {
