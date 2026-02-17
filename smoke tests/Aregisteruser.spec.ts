@@ -24,11 +24,11 @@ test('User is able to register as a new user', async ({ page }) => {
   });
 
   await test.step('Enter name and email address', async () => {
-  const signupEmail = `btestuser.${Date.now()}@example.com`;
+  const signupEmail = `btestuser@example.com`;
   await page.getByRole('textbox', { name: 'Name' }).click();
   await page.getByRole('textbox', { name: 'Name' }).fill('Btestuser');
   await page.locator('form').filter({ hasText: 'Signup' }).getByPlaceholder('Email Address').click();
-  await page.locator('form').filter({ hasText: 'Signup' }).getByPlaceholder('Email Address').fill(signupEmail);
+  await page.locator('form').filter({ hasText: 'Signup' }).getByPlaceholder('Email Address').fill('btestuser@example.com');
   await test.step('Click \'Signup\' button', async () => {
     await page.getByRole('button', { name: 'Signup' }).click();
     await page.waitForLoadState('networkidle');
@@ -111,3 +111,4 @@ await test.step('Verify that \'ENTER ACCOUNT INFORMATION\' is visible', async ()
     await expect(page).toHaveTitle('Automation Exercise');
   });
 });
+
