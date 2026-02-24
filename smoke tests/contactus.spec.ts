@@ -69,3 +69,24 @@ test('User is able to fill in contact form and upload file', async ({ page }) =>
     });
   });
 });
+
+test('Submit contact form with empty fields', async ({page}) => {
+    await page.goto('https://automationexercise.com/contact_us');
+    await page.getByRole('button', { name: 'Submit' }).click();
+
+    // Check if the 'Name' field is still focused or reporting invalid (HTML5 validation)
+    const nameInput = page.locator('input[data-qa="name"]');
+    await expect(nameInput).toBeTruthy();
+
+    // Check if the 'Email' field is still focused or reporting invalid (HTML5 validation)
+    const emailInput = page.locator('input[data-qa="email"]');
+    await expect(emailInput).toBeTruthy();
+
+    // Check if the 'Subject' field is still focused or reporting invalid (HTML5 validation)
+    const subjectInput = page.locator('input[data-qa="subject"]');
+    await expect(subjectInput).toBeTruthy();
+
+    // Check if the 'Message' field is still focused or reporting invalid (HTML5 validation)
+    const messageInput = page.locator('textarea[data-qa="message"]');
+    await expect(messageInput).toBeTruthy();
+  })

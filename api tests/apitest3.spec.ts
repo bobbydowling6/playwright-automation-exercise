@@ -89,7 +89,8 @@ test.describe('Automation Exercise API Audit', () => {
     expect(validatedBrands.responseCode).toBe(200);
     expect(validatedProducts.responseCode).toBe(200);
     expect(products.length).toBeGreaterThan(0);
-    
+    expect(validatedBrands).toBeDefined();
+    expect(validatedProducts).toBeDefined();
     // Ensure every product has a valid price
     products.forEach(p => {
       expect(p.price).toBeGreaterThan(0);

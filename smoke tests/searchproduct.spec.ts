@@ -43,3 +43,20 @@ await test.step('Verify that all the products related to search are visible', as
   await expect(searchedProducts).toHaveCount(3); // Assuming there are 3 products related to 'Jeans'
 });
 });
+
+test('Search with empty query should return all products', async ({ page }) => {
+    await page.goto('https://automationexercise.com/products');
+    
+    // Get the count of products BEFORE searching
+    const initialCount = await page.locator('.features_items .product-image-wrapper').count();
+    
+    // Perform empty search
+    await page.click('#submit_search');
+    
+    // Assert: The URL changed to include the search parameter
+    await expect(page).toHaveURL(/search/);
+    
+    // Assert: We still see the same amount of products (the "Show All" behavior)
+    const finalCount = page.locator('.features_items .product-image-wrapper');
+    await expect(finalCount).toHaveCount(initialCount);
+});

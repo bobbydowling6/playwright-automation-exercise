@@ -40,3 +40,19 @@ test('Verify that user is able to view category products', async ({ page }) => {
         });
     });
 });
+
+// CSV-driven approach for Data-Driven Testing of Search Functionality
+const searchTerms = ['tshirt', 'dress', 'jeans', 'top', 'saree', 'nonexistent'];
+
+for (const term of searchTerms) {
+  test(`Search for product: "${term}"`, async ({ page }) => {
+    await page.goto('https://automationexercise.com/products');
+    await page.fill('#search_product', term);
+    await page.click('#submit_search');
+    if (term === 'nonexistent') {
+      await expect(page.locator('.productinfo')).toHaveCount(0);
+    } else {
+      await expect(page.locator('.productinfo')).not.toHaveCount(0);
+    }
+  });
+}
