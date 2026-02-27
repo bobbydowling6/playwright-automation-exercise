@@ -1,4 +1,5 @@
 import { test, expect} from '@playwright/test';
+import { HomePage } from '../pages/HomePage';
 
 test.beforeEach(async ({ page }) => {
     // Intercept and abort all requests to common ad providers
@@ -12,19 +13,20 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('Verify that user is able to view testcase page', async ({ page }) => {
+  const homePage = new HomePage(page);
   await test.step('Go to https://automationexercise.com/', async () => {
-    await page.goto('http://automationexercise.com/');
+    await homePage.navigate();
     await test.step('Verify that home page is visible successfully', async () => {
-      await expect(page).toHaveTitle('Automation Exercise');
+      await homePage.title();
     });
     });
     
   await test.step('Click on \'Test Cases\' button', async () => {
-    await page.getByRole('link', { name: ' Test Cases' }).click();
+    await homePage.testcases();
     await test.step('Verify that user is navigated to test cases page successfully', async () => {
-      await expect(page).toHaveURL(/\/test_cases/);
+      await homePage.testcases();
       await test.step('Verify that \'Test Cases\' page is visible', async () => {
-        await expect(page.getByRole('heading', { name: 'Test Cases', exact: true })).toBeVisible();
+        await homePage.testcases();
       });
     });
   });
