@@ -1,4 +1,7 @@
 import { test, expect } from '@playwright/test';
+import { CartPage } from '../pages/CartPage';
+import { ProductsPage } from '../pages/ProductsPage';
+import { HomePage } from '../pages/HomePage';
 
 test.beforeEach(async ({ page }) => {
     // Intercept and abort all requests to common ad providers
@@ -12,46 +15,40 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('Verify that user is able to add products to cart with different quantities', async ({ page }) => {    
-    
+    const homePage = new HomePage(page);
+    const productsPage = new ProductsPage(page);
+    const cartPage = new CartPage(page);
     await test.step('Navigate to home page', async () => {
         await test.step('Go to https://automationexercise.com/', async () => {
-        await page.goto('https://automationexercise.com/');
+        await homePage.navigate();
         await test.step('Verify that home page is visible successfully', async () => {
-        await expect(page).toHaveTitle('Automation Exercise');
+        await homePage.title();
   });
     });
 
     await test.step('View a specific product on the home page', async () => {   
-        await page.locator('div:nth-child(25) > .product-image-wrapper > .choose > .nav > li > a').click({force: true}); 
+        await homePage.clickGreenSidePlacketDetail(); 
     });
 
     await test.step('Verify product details page is visible', async () => {
-        await expect(page.getByRole('heading', { name: 'Green Side Placket Detail' })).toBeVisible();
-        await expect(page.locator('.product-information')).toBeVisible();
+        await productsPage.verifyGreenSidePlacketDetailPage();
     });
 
     await test.step('Add product to cart with quantity 4', async () => {   
-        const quantityInput = page.locator('#quantity');
-        await quantityInput.fill('4'); 
-        
-        await page.getByRole('button', { name: 'Add to cart' }).click();
+        await productsPage.addGreenSidePlacketToCartWithQuantity();
     });
 
     await test.step('Navigate to cart', async () => {
         // Wait for the modal to appear and click 'View Cart'
-        const viewCartLink = page.getByRole('link', { name: 'View Cart' });
-        await expect(viewCartLink).toBeVisible();
-        await viewCartLink.click();
+        await cartPage.navigateToCartFromProducts();
     });
 
     await test.step('Verify correct quantity in cart', async () => {
         // Verify the product name exists in the table
-        await expect(page.getByRole('cell', { name: 'Green Side Placket Detail' })).toBeVisible();
-        
+        await cartPage.verifyGreenSidePlacketInCart();        
         // Verify the quantity specifically within the quantity cell
         // Playwright's toHaveText is better than parseInt because it includes auto-retries
-        const quantityCell = page.locator('td.cart_quantity button');
-        await expect(quantityCell).toHaveText('4');
+        await cartPage.verifyQuantityInCart('4');
     });
 });
 });

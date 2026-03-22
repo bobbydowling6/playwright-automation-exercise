@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
 import os from 'os';
+import { HomePage } from '../pages/HomePage';
+import { ContactUsPage } from '../pages/ContactUs';
 
 test.beforeEach(async ({ page }) => {
   // Intercept and abort ad requests to keep the test stable
@@ -14,79 +16,71 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('User is able to fill in contact form and upload file', async ({ page }) => {
+  let homePage: HomePage = new HomePage(page);
+  let contactUsPage: ContactUsPage = new ContactUsPage(page);
   const downloadsPath = path.join(os.homedir(), 'Downloads', 'test-file.rtf');
 
   await test.step('Go to Home Page', async () => {
-    await page.goto('http://automationexercise.com/');
-    await expect(page).toHaveTitle('Automation Exercise');
+    await homePage.navigate();
+    await homePage.title();
   });
 
   await test.step('Navigate to Contact Us', async () => {
-    await page.getByRole('link', { name: ' Contact Us' }).click();
-    await expect(page).toHaveTitle('Automation Exercise - Contact Us');
-    await expect(page.getByRole('heading', { name: 'Get In Touch' })).toBeVisible();
+    await contactUsPage.navigate();
+    await contactUsPage.title();
+    await contactUsPage.getInTouchHeadingVisible();
   });
 
   await test.step('Fill form details', async () => {
-    await page.getByRole('textbox', { name: 'Name' }).fill('Btestuser');
-    await page.getByRole('textbox', { name: 'Email', exact: true }).fill('btestuser@example.com');
-    await page.getByRole('textbox', { name: 'Subject' }).fill('Test Subject');
-    await page.getByRole('textbox', { name: 'Message' }).fill('Test Message');
+    await contactUsPage.contactUsFormVisible();
+    await contactUsPage.fillFormDetails('Btestuser', 'btestuser@example.com', 'Test Subject', 'Test Message');
   });
 
   await test.step('Upload a file', async () => {
     // FIX: Do NOT click the button. Use setInputFiles on the input element.
     // The selector 'input[name="upload_file"]' targets the specific hidden file input.
-    await page.locator('input[name="upload_file"]').setInputFiles(downloadsPath);
+    await contactUsPage.uploadFile(downloadsPath);
   });
 
   await test.step('Submit form and handle dialog', async () => {
     // FIX: Setup the dialog listener BEFORE clicking submit
-    page.once('dialog', async dialog => {
-      console.log(`Dialog message: ${dialog.message()}`);
-      await dialog.accept(); // Clicks 'OK'
-    });
+    await contactUsPage.handleDialog();
 
-    await page.getByRole('button', { name: 'Submit' }).click();
+    await contactUsPage.submitFormButtonClick();
 
     // Verify success message on the page
-    const successMsg = page.locator('.status.alert.alert-success');
-    await expect(successMsg).toBeVisible();
-    await expect(successMsg).toHaveText('Success! Your details have been submitted successfully.');
+    await contactUsPage.successMessageVisible();
   });
 
   await test.step('Click on Home button and verify that landed to home page successfully', async () => {
     await test.step('Click on Home button', async () => {
-      page.once('dialog', dialog => {
-        console.log(`Dialog message: ${dialog.message()}`);
-        dialog.dismiss().catch(() => {});
-      });
-      await page.getByRole('link', { name: ' Home' }).click();
+      await contactUsPage.clickHomeButton();
     });
     await test.step('Verify that landed to home page successfully', async () => {
-    await expect(page).toHaveURL('https://automationexercise.com/');
-    await expect(page).toHaveTitle('Automation Exercise');
+    await homePage.isHomePageUrl();
+    await homePage.title();
     });
   });
 });
 
 test('Submit contact form with empty fields', async ({page}) => {
-    await page.goto('https://automationexercise.com/contact_us');
-    await page.getByRole('button', { name: 'Submit' }).click();
+  let contactUsPage: ContactUsPage = new ContactUsPage(page);
+    await contactUsPage.navigate();
+    await contactUsPage.submitFormButtonClick();
 
     // Check if the 'Name' field is still focused or reporting invalid (HTML5 validation)
-    const nameInput = page.locator('input[data-qa="name"]');
-    await expect(nameInput).toBeTruthy();
+    await contactUsPage.nameInput();
+    await expect(contactUsPage.nameInput()).toBeTruthy();
 
     // Check if the 'Email' field is still focused or reporting invalid (HTML5 validation)
-    const emailInput = page.locator('input[data-qa="email"]');
-    await expect(emailInput).toBeTruthy();
+    await contactUsPage.emailInput();
+    await expect(contactUsPage.emailInput()).toBeTruthy();
 
     // Check if the 'Subject' field is still focused or reporting invalid (HTML5 validation)
-    const subjectInput = page.locator('input[data-qa="subject"]');
-    await expect(subjectInput).toBeTruthy();
+    await contactUsPage.subjectInput();
+    await expect(contactUsPage.subjectInput()).toBeTruthy();
 
     // Check if the 'Message' field is still focused or reporting invalid (HTML5 validation)
-    const messageInput = page.locator('textarea[data-qa="message"]');
-    await expect(messageInput).toBeTruthy();
+    await contactUsPage.messageInput();
+    await expect(contactUsPage.messageInput()).toBeTruthy();
   })

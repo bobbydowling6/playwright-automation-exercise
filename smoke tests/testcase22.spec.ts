@@ -1,4 +1,6 @@
 import { test, expect} from '@playwright/test';
+import { HomePage } from '../pages/HomePage';
+import { CartPage } from '../pages/CartPage';
 
 test.beforeEach(async ({ page }) => {
     // Intercept and abort all requests to common ad providers
@@ -12,10 +14,12 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('User is able to add product to cart from Recommended items', async ({ page }) => {
+    const homePage = new HomePage(page);
+    const cartPage = new CartPage(page);
     await test.step('Go to https://automationexercise.com/', async () => {
-        await page.goto('http://automationexercise.com/');
+        await homePage.navigate();
         await test.step('Verify that home page is visible successfully', async () => {
-            await expect(page).toHaveTitle('Automation Exercise');
+            await homePage.isHomePageVisible();
         });
     });
 
@@ -24,18 +28,26 @@ test('User is able to add product to cart from Recommended items', async ({ page
     });
 
     await test.step('Verify that \'RECOMMENDED ITEMS\' are visible', async () => {
-        await expect(page.getByRole('heading', { name: 'RECOMMENDED ITEMS' })).toBeVisible();
+        await homePage.recommendedItemsVisible();
     });
 
     await test.step('Click on \'Add To Cart\' button on Recommended item', async () => {
-       await page.locator('.item > div > .product-image-wrapper > .single-products > .productinfo > .btn').first().click();
+       await homePage.addRecommendedItemToCart();
     });
 
     await test.step('Click on \'View Cart\' button in the modal', async () => {
-        await page.getByRole('link', { name: 'View Cart' }).click();
+        await homePage.viewCartInModal();
+    });
+
+    await test.step('Verify that user is navigated to cart page successfully', async () => {
+        await cartPage.cartPageUrl();
+    });
+
+    await test.step('Verify that cart is not empty', async () => {
+        await cartPage.verifyCartNotEmpty();
     });
 
     await test.step('Verify that the product is displayed in the cart', async () => {
-        await page.getByRole('row', { name: 'Product Image Blue Top Women' }).click();
+        await cartPage.blueTopProductInCart();
     });
 });

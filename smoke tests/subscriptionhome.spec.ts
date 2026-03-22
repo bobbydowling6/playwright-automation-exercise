@@ -30,7 +30,7 @@ await test.step('Scroll down to footer', async () => {
 await test.step('Enter email address in input and click arrow button', async () => {
   await homePage.subscribe();
     await test.step('Verify success message \'You have been successfully subscribed!\' is visible', async () => {   
-        await expect(page.getByText('You have been successfully subscribed!')).toBeVisible();
+        await homePage.subscribeSuccessMessage();
     });
 });
 });

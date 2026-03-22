@@ -1,4 +1,7 @@
 import {test, expect} from '@playwright/test';
+import { HomePage } from '../pages/HomePage';
+import { RegistrationPage } from '../pages/RegistrationPage'; 
+import { users } from '../test-data/users';
 
 test.beforeEach(async ({ page }) => {
     // Intercept and abort all requests to common ad providers
@@ -12,31 +15,29 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('User is not able to register new user with existing email', async ({page}) => {
+    const homePage = new HomePage(page);
+    const registrationPage = new RegistrationPage(page);
+    
     await test.step('Go to https://automationexercise.com/', async () => {
-    await page.goto('http://automationexercise.com/');
+    await homePage.navigate();
     await test.step('Verify that home page is visible successfully', async () => {
-      await expect(page).toHaveTitle('Automation Exercise');
+      await homePage.title();
     });
   });
   
   await test.step('Click on \'Signup / Login\' button', async () => {
-    await page.getByRole('link', {name: ' Signup / Login'}).click();
+    await homePage.clickSignupLogin();
     await test.step('Verify \'New User Signup!\' is visible', async () => {
-      await expect(page.getByText('New User Signup!')).toBeVisible();
+      await registrationPage.newUserSignupVisible();
     });
     });
   
     await test.step('Enter name and existing email address', async () => {
-    await page.getByRole('textbox', { name: 'Name' }).click();
-    await page.getByRole('textbox', { name: 'Name' }).fill('Btestuser');
-    await page.locator('form').filter({ hasText: 'Signup' }).getByPlaceholder('Email Address').click();
-    await page.locator('form').filter({ hasText: 'Signup' }).getByPlaceholder('Email Address').fill('btestuser@example.com');
-    await test.step('Click \'Signup\' button', async () => {
-      await page.getByRole('button', { name: 'Signup' }).click();
+    await registrationPage.enterNameAndEmail(users.standard.name, users.standard.email);  
+    await registrationPage.clickSignupButton();
     });
-  });
   
     await test.step('Verify that error \'Email Address already exist!\' is visible', async () => {
-    console.log(await page.content()); // Print page HTML for diagnosis
-    await expect(page.getByText('Email Address already exist!')).toBeVisible();    });   
+    await registrationPage.verifyEmailAlreadyExists();
+  });  
 });

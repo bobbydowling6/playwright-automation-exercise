@@ -1,4 +1,7 @@
 import {test, expect} from '@playwright/test';
+import { HomePage } from '../pages/HomePage'
+import { LoginPage } from '../pages/LoginPage';
+import { users } from '../test-data/users';
 
 test.beforeEach(async ({ page }) => {
     // Intercept and abort all requests to common ad providers
@@ -12,36 +15,32 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('User is able to logout successfully', async ({page}) => {
+  const homePage = new HomePage(page);
+  const loginPage = new LoginPage(page);
   await test.step('Go to https://automationexercise.com/', async () => {
-    await page.goto('http://automationexercise.com/');
+    await homePage.navigate();
     await test.step('Verify that home page is visible successfully', async () => {
-      await expect(page).toHaveTitle('Automation Exercise');
+      await homePage.title();
     });
   });
 
   await test.step('Click on \'Signup / Login\' button', async () => {
-    await page.getByRole('link', {name: ' Signup / Login'}).click();
+    await homePage.clickSignupLogin();
   });
   
   await test.step('Verify Login to your account page is visible', async () => {
-    await expect(page.getByText('Login to your account')).toBeVisible();
+    await loginPage.verifyLoginToYourAccountVisible();
   });
-    await test.step('Enter correct email address and password', async () => { 
-    await page.locator('form').filter({ hasText: 'Login' }).getByPlaceholder('Email Address').click();
-    await page.locator('form').filter({ hasText: 'Login' }).getByPlaceholder('Email Address').fill('btestuser@example.com');
-    await page.getByRole('textbox', { name: 'Password' }).click();
-    await page.getByRole('textbox', { name: 'Password' }).fill('Test@1234');
+    await test.step('Enter correct email address and password, and then click Login button', async () => { 
+    await loginPage.login(users.standard.email, users.standard.password);
   });   
-  await test.step('Click on \'Login\' button', async () => {
-    await page.getByRole('button', { name: 'Login' }).click();
     await test.step('Verify that \'Logged in as username\' is visible', async () => {
-    await expect(page.getByRole('listitem').filter({ hasText: 'Logged in as Btestuser' })).toBeVisible();
-  });
+    await homePage.verifyLoggedInAs(users.standard.name);
   });
     await test.step('Click on \'Logout\' button', async () => {
-    await page.getByRole('link', {name: ' Logout'}).click();
+    await homePage.clickLogout();
     await test.step('Verify that user is navigated to login page', async () => {
-    await expect(page).toHaveURL(/\/login/);
+    await loginPage.verifyLoginUrl();
   });   
 });
      

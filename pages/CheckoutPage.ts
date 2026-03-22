@@ -8,6 +8,22 @@ export class CheckoutPage {
     this.page = page;
   }
 
+  async reviewYourOrderTitle() {
+    await expect(this.page.getByRole('heading', { name: 'Review Your Order' })).toBeVisible();
+  }
+
+  async yourDeliveryAddressTitle() {
+    await expect(this.page.getByRole('heading', { name: 'Your delivery address' })).toBeVisible();
+  }
+
+  async yourBillingAddressTitle() {
+    await expect(this.page.getByRole('heading', { name: 'Your billing address' })).toBeVisible();
+  }
+
+  async addressDetailsTitle() {
+    await expect(this.page.locator('#cart_items')).toContainText('Address Details');
+  }
+
   async verifyDeliveryAddress(user: User) {
     if (!user.address) return;
 
@@ -43,5 +59,8 @@ export class CheckoutPage {
 
   async proceedToPayment() {
     await this.page.click('a[href="/payment"]');
+  }
+  async placeOrderButton() {
+        await this.page.getByRole('link', { name: 'Place Order' }).click();
   }
 }

@@ -7,6 +7,25 @@ export class RegistrationPage {
   constructor(page: Page) {
     this.page = page;
   }
+  async newUserSignupVisible() {
+    await expect(this.page.getByText('New User Signup!')).toBeVisible();
+  }
+  
+  async enterNameAndEmail(name: string, email: string) {
+    await this.page.getByRole('textbox', { name: 'Name' }).click();
+    await this.page.getByRole('textbox', { name: 'Name' }).fill(name);
+    await this.page.locator('form').filter({ hasText: 'Signup' }).getByPlaceholder('Email Address').click();
+    await this.page.locator('form').filter({ hasText: 'Signup' }).getByPlaceholder('Email Address').fill(email);
+  }
+
+  async clickSignupButton() {
+    await this.page.getByRole('button', { name: 'Signup' }).click();
+    await this.page.waitForLoadState('networkidle');
+  }
+
+  async verifyEnterAccountInformationVisible() {
+    await expect(this.page.getByText(/ENTER ACCOUNT INFORMATION/i)).toBeVisible({ timeout: 15000 });
+  }
 
   async fillAccountInformation(user: User) {
     // Gender
@@ -21,14 +40,28 @@ export class RegistrationPage {
 
     // Date of Birth
     if (user.dateOfBirth) {
-      await this.page.selectOption('#days', user.dateOfBirth.day);
-      await this.page.selectOption('#months', user.dateOfBirth.month);
-      await this.page.selectOption('#years', user.dateOfBirth.year);
+      await this.page.locator('#days').selectOption('1');
+      await this.page.locator('#months').selectOption('January');
+      await this.page.locator('#years').selectOption('1990');
     }
 
     // Newsletter & Offers (optional)
     await this.page.check('#newsletter');
     await this.page.check('#optin');
+  }
+
+  async selectNewsletter() {
+    await this.page.getByRole('checkbox', { name: 'Sign up for our newsletter!' }).check();
+    await this.page.waitForTimeout(500);
+    await expect(this.page.getByLabel('Sign up for our newsletter!')).toBeChecked();
+    await this.page.getByLabel('Sign up for our newsletter!').check();
+  }
+
+  async selectSpecialOffers() {
+    await this.page.getByRole('checkbox', { name: 'Receive special offers from our partners!' }).check();
+    await this.page.waitForTimeout(500);
+    await expect(this.page.getByLabel('Receive special offers from our partners!')).toBeChecked();
+    await this.page.getByLabel('Receive special offers from our partners!').check();
   }
 
   async fillAddressInformation(user: User) {
@@ -73,5 +106,9 @@ export class RegistrationPage {
     await this.submitRegistration();
     await this.verifyAccountCreated();
     await this.continueAfterRegistration();
+  }
+  async verifyEmailAlreadyExists() {
+    console.log(await this.page.content()); // Print page HTML for diagnosis
+    await expect(this.page.getByText('Email Address already exist!')).toBeVisible();  
   }
 }

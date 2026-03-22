@@ -1,4 +1,6 @@
 import { test, expect} from '@playwright/test';
+import { HomePage } from '../pages/HomePage';
+import { ProductsPage } from '../pages/ProductsPage';
 
 test.beforeEach(async ({ page }) => {
     // Intercept and abort all requests to common ad providers
@@ -12,44 +14,33 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('Verify that user is able to verify all products and views first product details page', async ({ page }) => {
+    const homePage = new HomePage(page);
+    const productsPage = new ProductsPage(page);
     await test.step('Go to https://automationexercise.com/', async () => {
-        await page.goto('http://automationexercise.com/');
+        await homePage.navigate();
         await test.step('Verify that home page is visible successfully', async () => {
-            await expect(page).toHaveTitle('Automation Exercise');
+            await homePage.isHomePageUrl();
         });
     });
     await test.step('Click on \'Products\' button', async () => {
-        await page.getByRole('link', { name: ' Products' }).click({force: true}); // Note: site uses icons in text
+        await homePage.clickProducts();
         await test.step('Verify that user is navigated to ALL PRODUCTS page successfully', async () => {
-            await expect(page).toHaveURL(/\/products/);
+            await productsPage.productsPageUrl();
             await test.step('Verify that \'ALL PRODUCTS\' is visible', async () => {
-                await expect(page.getByRole('heading', { name: 'All Products', exact: true })).toBeVisible();
+                await productsPage.verifyProductsPageVisible();
             });
         });
     });
     await test.step('Verify that products are visible', async () => {
-        const products = page.locator('.features_items .product-image-wrapper');
-        await expect(products).toHaveCount(34); // Assuming there are 34 products listed);
+        await productsPage.searchProductInitialCount();
     });
     await test.step('Click on \'View Product\' of first product', async () => {
-        const firstProduct = page.locator('.features_items .product-image-wrapper').first();
-        await firstProduct.getByRole('link', { name: 'View Product' }).click();
+        await productsPage.clickViewProductOfFirstProduct();
         await test.step('Verify that user is navigated to product detail page', async () => {
-            await expect(page).toHaveURL(/\/product_details\/\d+/);
+            await productsPage.verifyProductDetailPageUrl();
             await test.step('Verify that product detail is visible', async () => {
-                await expect(page.locator('.product-information')).toBeVisible();
-                await expect(page.getByRole('heading', { name: 'Blue Top' })).toBeVisible();
-                await expect(page.getByText('Category: Women > Tops')).toBeVisible();
-                await expect(page.getByText('Rs.')).toBeVisible();
-                await expect(page.getByText('Availability: In Stock')).toBeVisible();
-                await expect(page.getByText('Condition: New')).toBeVisible();
-                await expect(page.getByText('Brand: Polo')).toBeVisible();
-                // Alternatively, using regex to match text patterns
-                await expect(page.getByText(/Category: .+/)).toBeVisible();
-                await expect(page.getByText(/Rs\..+/)).toBeVisible();
-                await expect(page.getByText(/Availability: .+/)).toBeVisible();
-                await expect(page.getByText(/Condition: .+/)).toBeVisible();
-                await expect(page.getByText(/Brand: .+/)).toBeVisible();
+                await productsPage.verifyProductDetailPage();
+                await productsPage.verifyProductDetailsBlueTop();
             });
         });
     });

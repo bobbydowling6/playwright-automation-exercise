@@ -1,4 +1,6 @@
 import { test, expect} from '@playwright/test';
+import { HomePage } from '../pages/HomePage';
+import { ProductsPage } from '../pages/ProductsPage';
 
 test.beforeEach(async ({ page }) => {
     // Intercept and abort all requests to common ad providers
@@ -12,41 +14,40 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('User is able to add review to product', async ({ page }) => {
+    const homePage = new HomePage(page);
+    const productsPage = new ProductsPage(page);
     await test.step('Go to https://automationexercise.com/', async () => {
-        await page.goto('http://automationexercise.com/');
+        homePage.navigate();
         await test.step('Verify that home page is visible successfully', async () => {
-            await expect(page).toHaveTitle('Automation Exercise');
+            homePage.title();
         });
     });
 
     await test.step('Click on \'Products\' button', async () => {
-       await page.getByRole('link', { name: ' Products' }).click();
+       await homePage.clickProducts();
     });
 
     await test.step('Verify that user is navigated to ALL PRODUCTS page successfully', async () => {
-        await expect(page.getByRole('heading', { name: 'ALL PRODUCTS' })).toBeVisible();
+        await productsPage.verifyProductsPageVisible();
     });
 
     await test.step('Click on \'View Product\' of first product', async () => {
-        await page.getByRole('link', { name: ' View Product' }).first().click();
+        await productsPage.viewFirstProduct();
     });
 
     await test.step('Verify that \'Write Your Review\' is visible', async () => {
-    await expect(page.getByRole('list').filter({ hasText: 'Write Your Review' })).toBeVisible();
+        await productsPage.verifyWriteYourReviewVisible();
     });
 
     await test.step('Fill out name, email and review fields', async () => {
-       await page.getByRole('textbox', { name: 'Your Name' }).fill('Test User');
-       await page.getByRole('textbox', { name: 'Email Address', exact: true }).fill('testuser@example.com');
-       await page.getByRole('textbox', { name: 'Add Review Here!' }).fill('I am adding a review for this product');
-       await page.getByRole('textbox', { name: 'Add Review Here!' }).fill('I am adding a review for this product');
+       await productsPage.fillReviewForm('Test User', 'testuser@example.com', 'I am adding a review for this product');
     });
 
     await test.step('Click on \'Submit\' button', async () => {
-       await page.getByRole('button', { name: 'Submit' }).click();
+       await productsPage.submitReview();
     });
 
     await test.step('Verify success message \'Thank you for your review.\' is visible', async () => {
-        await expect(page.getByText('Thank you for your review.')).toBeVisible();
+        await productsPage.verifyReviewSubmissionSuccess();
     });
 });

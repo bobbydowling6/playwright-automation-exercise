@@ -1,4 +1,6 @@
 import { test, expect } from '@playwright/test';
+import { ProductsPage } from '../pages/ProductsPage';
+import { HomePage } from '../pages/HomePage';
 
 test.beforeEach(async ({ page }) => {
     // Intercept and abort all requests to common ad providers
@@ -12,31 +14,30 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('Verify that search functionality works correctly', async ({ page }) => {
+  let homePage = new HomePage(page);
+  let productsPage = new ProductsPage(page);
 await test.step('Go to https://automationexercise.com/', async () => {
-  await page.goto('https://automationexercise.com/');
+  await homePage.navigate();
   await test.step('Verify that home page is visible successfully', async () => {
-  await expect(page).toHaveTitle('Automation Exercise');
+  await homePage.title();
   });
 });
 await test.step('Click on \'Products\' button', async () => {    
-  await page.getByRole('link', { name: ' Products' }).click();
-  await page.getByRole('heading', { name: 'All Products' }).isVisible();
+  await homePage.clickProducts();
+  await test.step('Verify user is navigated to ALL PRODUCTS page successfully', async () => {
+  await productsPage.verifyProductsPageVisible();
+  });
 });
 await test.step('Search for a product using the search input field', async () => {
-  await page.getByRole('textbox', { name: 'Search Product' }).click();
-  await page.getByRole('textbox', { name: 'Search Product' }).fill('Polo');
-  await page.locator('#submit_search').click();
-  await page.getByRole('heading', { name: 'Searched Products' }).isVisible();
+  await productsPage.searchProduct('Polo');
+  await productsPage.searchProductWithResults('Polo');
 });
 await test.step('Verify that all the products related to search are visible', async () => {
-  const searchedProducts = page.locator('.features_items .product-image-wrapper');
-  await expect(searchedProducts).toHaveCount(1); // Assuming there are 1 products related to 'Polo'
+  await productsPage.searchProductsCount(1); // Assuming there is 1 product related to 'Polo'
 });
 await test.step('Search for another product using the search input field', async () => {
-  await page.getByRole('textbox', { name: 'Search Product' }).click();
-  await page.getByRole('textbox', { name: 'Search Product' }).fill('Jeans');
-  await page.locator('#submit_search').click();
-  await page.getByRole('heading', { name: 'Searched Products' }).isVisible();
+  await productsPage.searchProduct('Jeans');
+  await productsPage.searchProductWithResults('Jeans');
 });
 await test.step('Verify that all the products related to search are visible', async () => {
   const searchedProducts = page.locator('.features_items .product-image-wrapper');
@@ -45,18 +46,18 @@ await test.step('Verify that all the products related to search are visible', as
 });
 
 test('Search with empty query should return all products', async ({ page }) => {
-    await page.goto('https://automationexercise.com/products');
+  let productsPage = new ProductsPage(page);
+    await productsPage.navigate();
     
     // Get the count of products BEFORE searching
-    const initialCount = await page.locator('.features_items .product-image-wrapper').count();
+    const initialCount = await productsPage.searchProductInitialCount();
     
     // Perform empty search
-    await page.click('#submit_search');
+    await productsPage.emptySearch();
     
     // Assert: The URL changed to include the search parameter
-    await expect(page).toHaveURL(/search/);
+    await productsPage.searchProductUrl();
     
     // Assert: We still see the same amount of products (the "Show All" behavior)
-    const finalCount = page.locator('.features_items .product-image-wrapper');
-    await expect(finalCount).toHaveCount(initialCount);
+    await productsPage.searchProductFinalCount(initialCount);
 });

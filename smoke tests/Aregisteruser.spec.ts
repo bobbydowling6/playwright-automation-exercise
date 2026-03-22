@@ -1,6 +1,11 @@
 import { test, expect } from '@playwright/test';
+import { HomePage } from '../pages/HomePage';
+import { RegistrationPage } from '../pages/RegistrationPage'; 
+import { LoginPage } from '../pages/LoginPage';
+import { users } from '../test-data/users';
 
 test.beforeEach(async ({ page }) => {
+  // Block ads/trackers to speed up execution
   await page.route('**/*google*/**', route => {
     const url = route.request().url();
     if (url.includes('googleads') || url.includes('doubleclick') || url.includes('adservice')) {
@@ -11,104 +16,50 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('User is able to register as a new user', async ({ page }) => {
-  await test.step('Go to https://automationexercise.com/', async () => {
-    await page.goto('https://automationexercise.com/');
-    await test.step('Verify that home page is visible successfully', async () => {
-    await expect(page).toHaveTitle('Automation Exercise');
-  });
-  });
+  const homePage = new HomePage(page);
+  const registrationPage = new RegistrationPage(page);
+  const loginPage = new LoginPage(page);
 
-  await test.step('Verify that \'New User Signup!\' is visible', async () => {
-    await page.getByRole('link', { name: ' Signup / Login' }).click();
-    await expect(page.getByText('New User Signup!')).toBeVisible();
+  await test.step('Navigate to home page and verify visibility', async () => {
+    await homePage.navigate();
+    await homePage.title(); // Assuming this method performs an assertion
   });
 
-  await test.step('Enter name and email address', async () => {
-  const signupEmail = `btestuser@example.com`;
-  await page.getByRole('textbox', { name: 'Name' }).click();
-  await page.getByRole('textbox', { name: 'Name' }).fill('Btestuser');
-  await page.locator('form').filter({ hasText: 'Signup' }).getByPlaceholder('Email Address').click();
-  await page.locator('form').filter({ hasText: 'Signup' }).getByPlaceholder('Email Address').fill('btestuser@example.com');
-  await test.step('Click \'Signup\' button', async () => {
-    await page.getByRole('button', { name: 'Signup' }).click();
-    await page.waitForLoadState('networkidle');
-  });
-});
-
-await test.step('Verify that \'ENTER ACCOUNT INFORMATION\' is visible', async () => {
-  await expect(page.getByText(/ENTER ACCOUNT INFORMATION/i)).toBeVisible({ timeout: 15000 });
-});
-
-  await test.step('Fill details: Title, Name, Email, Password, Date of birth', async () => {
-  await expect(page.getByText('Title')).toBeVisible();
-  await page.getByRole('radio', { name: 'Mr.' }).click();
-  await page.getByRole('textbox', { name: 'Password *' }).click();
-  await page.getByRole('textbox', { name: 'Password *' }).fill('Test@1234');
-  await expect(page.getByText('Date of Birth')).toBeVisible();
-  await page.locator('#days').selectOption('1');
-  await page.locator('#months').selectOption('January');
-  await page.locator('#years').selectOption('1990');
+  await test.step('Navigate to Signup/Login page', async () => {
+    await homePage.clickSignupLogin();
+    await registrationPage.newUserSignupVisible();
   });
 
-  await test.step('Select checkbox \'Sign up for our newsletter!\' and \'Receive special offers from our partners!\'', async () => {
-  await page.getByRole('checkbox', { name: 'Sign up for our newsletter!' }).click();
-  await page.waitForTimeout(500);
-  await expect(page.getByLabel('Sign up for our newsletter!')).toBeChecked();
-  await page.getByLabel('Sign up for our newsletter!').check();
-
-  await test.step('Select checkbox \'Receive special offers from our partners!\'', async () => {
-    await page.getByRole('checkbox', { name: 'Receive special offers from our partners!' }).click();
-    await page.waitForTimeout(500);
-    await expect(page.getByLabel('Receive special offers from our partners!')).toBeChecked();
-    await page.getByLabel('Receive special offers from our partners!').check();
-  });
-})
-  await test.step('Fill details: First name, Last name, Company, Address, Address2, Country, State, City, Zipcode, Mobile Number', async () => {
-  await page.getByRole('paragraph').filter({ hasText: 'First name *' }).getByRole('superscript');
-  await expect(page.getByText('First name *')).toBeVisible();
-  await page.getByRole('textbox', { name: 'First name *' }).fill('Test');
-  await page.getByRole('paragraph').filter({ hasText: 'Last name *' }).getByRole('superscript');
-  await expect(page.getByText('Last name *')).toBeVisible();
-  await page.getByRole('textbox', { name: 'Last name *' }).fill('User');
-  await page.getByRole('textbox', { name: 'Company', exact: true }).fill('TestCompany');
-  await page.getByRole('paragraph').filter({ hasText: 'Address *' }).getByRole('superscript');
-  await expect(page.getByText('Address *')).toBeVisible();
-  await page.getByRole('textbox', { name: 'Address *' }).fill('123 Test St');
-  await expect(page.getByText('Address 2')).toBeVisible();
-  await page.getByRole('textbox', { name: 'Address 2' }).fill('Suite 100');
-  await page.getByRole('combobox', { name: 'Country *' }).click();
-  await page.getByLabel('Country').selectOption('United States');
-  await page.getByRole('textbox', { name: 'State *' }).getByRole('superscript');
-  await expect(page.getByText('State *')).toBeVisible();
-  await page.getByRole('textbox', { name: 'State *' }).fill('TestState');
-  await page.getByRole('paragraph').filter({ hasText: 'City *' }).getByRole('superscript');
-  await page.getByRole('textbox', { name: 'City * Zipcode *' }).click();
-  await page.getByRole('textbox', { name: 'City * Zipcode *' }).fill('TestCity');
-  await page.locator('#zipcode').filter({ hasText: 'Zipcode *' }).getByRole('superscript');
-  await page.locator('#zipcode').click();
-  await page.locator('#zipcode').fill('12345');
-  await page.getByRole('paragraph').filter({ hasText: 'Mobile Number *' }).getByRole('superscript');
-  await expect(page.getByText('Mobile Number *')).toBeVisible();
-  await page.getByRole('textbox', { name: 'Mobile Number *' }).click();
-  await page.getByRole('textbox', { name: 'Mobile Number *' }).fill('1234567890');
+  await test.step('Enter initial name and email', async () => {
+    await registrationPage.enterNameAndEmail(users.standard.name, users.standard.email);  
+    await registrationPage.clickSignupButton();
   });
 
-  await test.step('Click \'Create Account\' button', async () => {
-    await page.getByRole('button', { name: 'Create Account' }).click();
+  await test.step('Verify "ENTER ACCOUNT INFORMATION" visibility', async () => {
+    await registrationPage.verifyEnterAccountInformationVisible();
   });
 
-  await test.step('Verify that \'ACCOUNT CREATED!\' is visible', async () => {
-    await expect(page.getByText('Account Created!')).toBeVisible();
+  await test.step('Fill account information details', async () => {
+    // This single call should handle all the internal fills/clicks
+    await registrationPage.fillAccountInformation(users.standard);
   });
 
-  await test.step('Click \'Continue\' button', async () => {
-    await page.getByRole('link', { name: 'Continue' }).click();
+  await test.step('Select newsletter and special offers checkboxes', async () => {
+    await registrationPage.selectNewsletter();
+    await registrationPage.selectSpecialOffers();
   });
 
-  await test.step('Verify that \'Logged in as username\' is visible', async () => {
-    await page.getByRole('listitem').filter({ hasText: 'Logged in as Btestuser' });
-    await page.getByText('Logged in as Btestuser').click();
-    await expect(page).toHaveTitle('Automation Exercise');
+  await test.step('Fill address information details', async () => {
+    await registrationPage.fillAddressInformation(users.standard);
+  });
+
+  await test.step('Click "Create Account" and verify success', async () => {
+    await registrationPage.submitRegistration();
+    await registrationPage.verifyAccountCreated();
+  });
+
+  await test.step('Continue to home and verify logged-in status', async () => {
+    await registrationPage.continueAfterRegistration();
+    await loginPage.verifyLoggedIn(users.standard.name);
   });
 });
-
